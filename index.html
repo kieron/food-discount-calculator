@@ -23,6 +23,7 @@
             First upload a CSV exported from RedBox, then input your share of
             the discount, eg if you chose to run a 20% discount, and your
             responsible for half of it, put 50%, or use a quick toggle!
+            Alternatively, click the Use Sample Data button to see how it works.
           </p>
         </div>
         <hr />
@@ -78,6 +79,12 @@
             class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
           >
             Calculate Discount
+          </button>
+          <button
+            @click="loadSampleData"
+            class="bg-blue-400 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-500 transition duration-300 ease-in-out"
+          >
+            Use Sample Data
           </button>
         </div>
 
@@ -218,6 +225,39 @@
                 alert("Error parsing CSV: " + error.message);
               },
             });
+          },
+          loadSampleData() {
+            // Sample data
+            this.resultsData = [
+              {
+                businessName: "Bobs Burgers",
+                amountOwed: "£200.00",
+                yourShare: "£100.00",
+                discountCode: "WELCOMEDISCOUNT",
+              },
+              {
+                businessName: "Peters Pizza",
+                amountOwed: "£150.00",
+                yourShare: "£70.50",
+                discountCode: "WELCOMEDISCOUNT",
+              },
+              {
+                businessName: "Rogers Ribs",
+                amountOwed: "£100.00",
+                yourShare: "£50.00",
+                discountCode: "WELCOMEDISCOUNT",
+              },
+            ];
+
+            // Example total discount for sample data
+            this.totalDiscount = 450; // Adjust based on your sample data
+
+            // Example discount code for sample data
+            this.discountCode = "WELCOMEDISCOUNT"; // If there's a common code, else you can omit this
+
+            // Optionally set a sample share percentage
+            this.sharePercentage = 50;
+            this.yourShare = "50";
           },
         },
       });
