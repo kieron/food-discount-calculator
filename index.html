@@ -14,12 +14,18 @@
       id="app"
       class="bg-gray-100 min-h-screen flex items-center justify-center"
     >
-      <div class="bg-white p-8 rounded-lg shadow-md max-w-3xl w-full">
+      <div
+        class="bg-white p-8 rounded-lg shadow-md max-w-3xl w-full gap-8 flex flex-col"
+      >
         <h1 class="text-2xl font-semibold text-center mb-4">
           Discount Calculator
         </h1>
-
-        <div class="flex justify-between items-center mb-4">
+        <p>
+          First upload a CSV exported from RedBox, then input your share of the
+          discount, eg if you chose to run a 20% discount, and your responsible
+          for half of it, put 50%, or use a quick toggle!
+        </p>
+        <div class="">
           <label
             for="csvFileInput"
             class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
@@ -27,9 +33,17 @@
             Upload CSV File
           </label>
           <input type="file" id="csvFileInput" accept=".csv" class="hidden" />
+        </div>
 
+        <div class="flex items-center mb-4 justify-between">
+          <input
+            v-model="yourShare"
+            type="number"
+            placeholder="Your Share Of The Discount (%)"
+            class="border border-gray-300 rounded-lg py-2 px-4 text-center w-80"
+          />
           <div class="flex items-center space-x-4">
-            <label class="font-semibold">Quick Share:</label>
+            <label class="text-xs font-semibold">Quick Toggles</label>
             <button
               @click="setSharePercentage(100)"
               class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
@@ -43,13 +57,6 @@
               50%
             </button>
           </div>
-
-          <input
-            v-model="yourShare"
-            type="number"
-            placeholder="Your Share (%)"
-            class="border border-gray-300 rounded-lg py-2 px-4 w-16 text-center w-44"
-          />
         </div>
 
         <div class="text-center">
