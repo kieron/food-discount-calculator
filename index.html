@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSV Processor</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div
+      id="app"
+      class="bg-gray-100 min-h-screen flex items-center justify-center"
+    >
+      <div class="bg-white p-8 rounded-lg shadow-md max-w-3xl w-full">
+        <h1 class="text-2xl font-semibold text-center mb-4">
+          Discount Calculator
+        </h1>
+
+        <div class="flex justify-between items-center mb-4">
+          <label
+            for="csvFileInput"
+            class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+          >
+            Upload CSV File
+          </label>
+          <input type="file" id="csvFileInput" accept=".csv" class="hidden" />
+
+          <div class="flex items-center space-x-4">
+            <label class="font-semibold">Quick Share:</label>
+            <button
+              @click="setSharePercentage(100)"
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+            >
+              100%
+            </button>
+            <button
+              @click="setSharePercentage(50)"
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+            >
+              50%
+            </button>
+          </div>
+
+          <input
+            v-model="yourShare"
+            type="number"
+            placeholder="Your Share (%)"
+            class="border border-gray-300 rounded-lg py-2 px-4 w-16 text-center w-44"
+          />
+        </div>
+
+        <div class="text-center">
+          <button
+            @click="processCSV"
+            class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+          >
+            Process CSV
+          </button>
+        </div>
+
+        <div id="results" class="mt-6">
+          <!-- Results will be displayed here -->
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          sharePercentage: 100,
+          yourShare: "",
+          processing: false,
+        },
+        methods: {
+          setSharePercentage(percentage) {
+            this.sharePercentage = percentage;
+            this.yourShare = percentage;
+          },
+          processCSV() {
+            const fileInput = document.getElementById("csvFileInput");
+            const resultsDiv = document.getElementById("results");
+
+            const file = fileInput.files[0];
+            if (!file) {
+              alert("Please select a CSV file.");
+              return;
+            }
+
+            // Disable the button during file upload
+            this.processing = true;
+
+            Papa.parse(file, {
+              header: true,
+              dynamicTyping: true,
+              complete: (results) => {
+                // Use an arrow function to preserve 'this' context
+                const data = results.data;
+                const owedAmounts = {};
+
+                // Process the CSV data and calculate amounts owed
+                for (const row of data) {
+                  const businessName = row["Business"];
+                  const discount = parseFloat(
+                    row["Discount"] ? row["Discount"].replace("£", "") : 0
+                  ); // Check if Discount exists
+
+                  if (businessName && !isNaN(discount)) {
+                    // Check if Business is defined and not empty
+                    if (owedAmounts[businessName]) {
+                      owedAmounts[businessName] += discount;
+                    } else {
+                      owedAmounts[businessName] = discount;
+                    }
+                  }
+                }
+
+                // Calculate your share
+                const yourShareFactor = parseFloat(this.yourShare) / 100;
+                const yourShareLabel = `Your Share: ${this.yourShare}%`;
+
+                // Display the results
+                resultsDiv.innerHTML = "<h2>Amounts Owed to Restaurants:</h2>";
+                const resultList = document.createElement("ul");
+
+                for (const businessName in owedAmounts) {
+                  const amountOwed = owedAmounts[businessName].toFixed(2);
+                  const yourShare = (
+                    owedAmounts[businessName] * yourShareFactor
+                  ).toFixed(2);
+                  const listItem = document.createElement("li");
+                  listItem.innerHTML = `${businessName}: £${amountOwed} <br> ${yourShareLabel}: £${yourShare}`;
+                  resultList.appendChild(listItem);
+                }
+
+                resultsDiv.appendChild(resultList);
+
+                // Re-enable the button after processing
+                this.processing = false;
+              },
+              error: (error) => {
+                // Use an arrow function to preserve 'this' context
+                alert("Error parsing CSV: " + error.message);
+
+                // Re-enable the button after an error
+                this.processing = false;
+              },
+            });
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
