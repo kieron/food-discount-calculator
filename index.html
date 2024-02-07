@@ -141,7 +141,6 @@
         data: {
           sharePercentage: 0,
           yourShare: "",
-          processing: false,
           resultsData: [],
           discountCode: "", // Single string to hold the discount code
           totalDiscount: 0, // New variable to hold the total discount amount
@@ -165,8 +164,6 @@
               alert("Please enter a valid share percentage between 1 and 100.");
               return;
             }
-
-            this.processing = true;
 
             Papa.parse(file, {
               header: true,
@@ -197,8 +194,10 @@
                       owedAmounts[businessName] = discount;
                     }
 
-                    // Update the total discount amount
-                    this.totalDiscount += discount;
+                    // Update the total discount amount with precise two decimal places
+                    this.totalDiscount = parseFloat(
+                      (this.totalDiscount + discount).toFixed(2)
+                    );
                   }
                 }
 
@@ -218,13 +217,9 @@
                     discountCode: this.discountCode, // Use the single discount code for all
                   });
                 }
-
-                // Re-enable the button after processing
-                this.processing = false;
               },
               error: (error) => {
                 alert("Error parsing CSV: " + error.message);
-                this.processing = false;
               },
             });
           },
