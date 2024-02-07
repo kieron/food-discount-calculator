@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CSV Processor</title>
+    <title>Redbox Discount Calculator</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css"
       rel="stylesheet"
@@ -34,32 +34,39 @@
         </div>
 
         <div class="flex mb-4 justify-between flex-col md:flex-row gap-y-5">
-          <input
-            v-model="yourShare"
-            type="number"
-            placeholder="Your Share Of The Discount (%)"
-            class="border border-gray-300 rounded-lg py-2 px-4 text-center w-80"
-          />
-          <div class="flex items-center space-x-4">
+          <div class="flex flex-col gap-y-2">
+            <label class="text-xs font-semibold"
+              >Your Share Of The Discount (%)</label
+            >
+            <input
+              v-model="yourShare"
+              type="number"
+              placeholder="50%"
+              class="border border-gray-300 rounded-lg py-2 px-4 text-center w-62"
+            />
+          </div>
+          <div class="flex flex-col gap-y-2">
             <label class="text-xs font-semibold">Quick Toggles</label>
-            <button
-              @click="setSharePercentage(100)"
-              class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
-            >
-              100%
-            </button>
-            <button
-              @click="setSharePercentage(50)"
-              class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
-            >
-              50%
-            </button>
-            <button
-              @click="setSharePercentage(25)"
-              class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
-            >
-              25%
-            </button>
+            <div class="flex space-x-4">
+              <button
+                @click="setSharePercentage(100)"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+              >
+                100%
+              </button>
+              <button
+                @click="setSharePercentage(50)"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+              >
+                50%
+              </button>
+              <button
+                @click="setSharePercentage(25)"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+              >
+                25%
+              </button>
+            </div>
           </div>
         </div>
 
@@ -72,7 +79,7 @@
           </button>
         </div>
 
-        <div id="results" class="mt-6" v-if="resultsData">
+        <div id="results" class="mt-6" v-if="resultsData.length">
           <h2 class="text-2xl font-semibold mb-4">Results</h2>
           <h3 class="text-md font-semibold mb-4">
             Discount {{discountCode}} saved customers: £{{totalDiscount}}!
@@ -128,25 +135,11 @@
       new Vue({
         el: "#app",
         data: {
-          sharePercentage: 100,
+          sharePercentage: 0,
           yourShare: "",
           processing: false,
-          resultsData: [
-            // Pre-existing example data
-            {
-              businessName: "Samuels",
-              amountOwed: "£18.20",
-              yourShare: "£18.20",
-              discountCode: "FANDFLTMKB",
-            },
-            {
-              businessName: "Bobs Burgers",
-              amountOwed: "£67.80",
-              yourShare: "£67.80",
-              discountCode: "FANDFLTMKB",
-            },
-          ],
-          discountCode: "FANDFLTMKB", // Single string to hold the discount code
+          resultsData: [],
+          discountCode: "", // Single string to hold the discount code
           totalDiscount: 0, // New variable to hold the total discount amount
         },
         methods: {
@@ -160,6 +153,12 @@
             const file = fileInput.files[0];
             if (!file) {
               alert("Please select a CSV file.");
+              return;
+            }
+
+            // Check if sharePercentage is set and valid
+            if (this.sharePercentage <= 0 || this.sharePercentage > 100) {
+              alert("Please enter a valid share percentage between 1 and 100.");
               return;
             }
 
