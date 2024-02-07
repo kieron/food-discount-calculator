@@ -17,9 +17,7 @@
       <div
         class="bg-white p-8 rounded-lg shadow-md max-w-3xl w-full gap-8 flex flex-col"
       >
-        <h1 class="text-2xl font-semibold text-center mb-4">
-          Discount Calculator
-        </h1>
+        <h1 class="text-2xl font-semibold">Discount Calculator</h1>
         <p>
           First upload a CSV exported from RedBox, then input your share of the
           discount, eg if you chose to run a 20% discount, and your responsible
@@ -74,8 +72,51 @@
           </button>
         </div>
 
-        <div id="results" class="mt-6">
-          <!-- Results will be displayed here -->
+        <div id="results" class="mt-6" v-if="resultsData">
+          <h2 class="text-2xl font-semibold mb-4">Results</h2>
+          <h3 class="text-md font-semibold mb-4">
+            Discount {{discountCode}} saved customers: £{{totalDiscount}}!
+          </h3>
+          <table class="min-w-full table-auto shadow-md bg-white">
+            <thead class="bg-gray-200">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Business Name
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Total Discount
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Your Share
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                v-for="result in resultsData"
+                :key="result.businessName"
+                class="hover:bg-gray-100"
+              >
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                >
+                  {{ result.businessName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ result.amountOwed }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ result.yourShare }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -90,6 +131,23 @@
           sharePercentage: 100,
           yourShare: "",
           processing: false,
+          resultsData: [
+            // Pre-existing example data
+            {
+              businessName: "Samuels",
+              amountOwed: "£18.20",
+              yourShare: "£18.20",
+              discountCode: "FANDFLTMKB",
+            },
+            {
+              businessName: "Bobs Burgers",
+              amountOwed: "£67.80",
+              yourShare: "£67.80",
+              discountCode: "FANDFLTMKB",
+            },
+          ],
+          discountCode: "FANDFLTMKB", // Single string to hold the discount code
+          totalDiscount: 0, // New variable to hold the total discount amount
         },
         methods: {
           setSharePercentage(percentage) {
@@ -98,7 +156,6 @@
           },
           processCSV() {
             const fileInput = document.getElementById("csvFileInput");
-            const resultsDiv = document.getElementById("results");
 
             const file = fileInput.files[0];
             if (!file) {
@@ -106,62 +163,64 @@
               return;
             }
 
-            // Disable the button during file upload
             this.processing = true;
 
             Papa.parse(file, {
               header: true,
               dynamicTyping: true,
               complete: (results) => {
-                // Use an arrow function to preserve 'this' context
                 const data = results.data;
                 const owedAmounts = {};
 
-                // Process the CSV data and calculate amounts owed
+                // Reset resultsData and totalDiscount before processing new file
+                this.resultsData = [];
+                this.totalDiscount = 0;
+                this.discountCode = "";
+
                 for (const row of data) {
                   const businessName = row["Business"];
                   const discount = parseFloat(
                     row["Discount"] ? row["Discount"].replace("£", "") : 0
-                  ); // Check if Discount exists
+                  );
+
+                  if (!this.discountCode && row["Discount Code"]) {
+                    this.discountCode = row["Discount Code"];
+                  }
 
                   if (businessName && !isNaN(discount)) {
-                    // Check if Business is defined and not empty
                     if (owedAmounts[businessName]) {
                       owedAmounts[businessName] += discount;
                     } else {
                       owedAmounts[businessName] = discount;
                     }
+
+                    // Update the total discount amount
+                    this.totalDiscount += discount;
                   }
                 }
 
-                // Calculate your share
                 const yourShareFactor = parseFloat(this.yourShare) / 100;
-                const yourShareLabel = `Your Share: ${this.yourShare}%`;
-
-                // Display the results
-                resultsDiv.innerHTML = "<h2>Amounts Owed to Restaurants:</h2>";
-                const resultList = document.createElement("ul");
 
                 for (const businessName in owedAmounts) {
                   const amountOwed = owedAmounts[businessName].toFixed(2);
                   const yourShare = (
                     owedAmounts[businessName] * yourShareFactor
                   ).toFixed(2);
-                  const listItem = document.createElement("li");
-                  listItem.innerHTML = `${businessName}: £${amountOwed} <br> ${yourShareLabel}: £${yourShare}`;
-                  resultList.appendChild(listItem);
-                }
 
-                resultsDiv.appendChild(resultList);
+                  // Push each result into the resultsData array for rendering in the template
+                  this.resultsData.push({
+                    businessName: businessName,
+                    amountOwed: `£${amountOwed}`,
+                    yourShare: `£${yourShare}`,
+                    discountCode: this.discountCode, // Use the single discount code for all
+                  });
+                }
 
                 // Re-enable the button after processing
                 this.processing = false;
               },
               error: (error) => {
-                // Use an arrow function to preserve 'this' context
                 alert("Error parsing CSV: " + error.message);
-
-                // Re-enable the button after an error
                 this.processing = false;
               },
             });
