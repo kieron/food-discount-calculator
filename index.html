@@ -227,35 +227,25 @@
             });
           },
           loadSampleData() {
-            // Sample data
             this.resultsData = [
               {
-                businessName: "Bobs Burgers",
-                amountOwed: "£200.00",
-                yourShare: "£100.00",
-                discountCode: "WELCOMEDISCOUNT",
-              },
-              {
                 businessName: "Peters Pizza",
-                amountOwed: "£150.00",
-                yourShare: "£70.50",
+                amountOwed: "£297.99",
+                yourShare: "£" + (parseFloat("297.99") * 0.5).toFixed(2),
                 discountCode: "WELCOMEDISCOUNT",
               },
               {
-                businessName: "Rogers Ribs",
-                amountOwed: "£100.00",
-                yourShare: "£50.00",
+                businessName: "Rogers Rib Shack",
+                amountOwed: "£807.30",
+                yourShare: "£" + (parseFloat("807.30") * 0.5).toFixed(2),
                 discountCode: "WELCOMEDISCOUNT",
               },
             ];
 
-            // Example total discount for sample data
-            this.totalDiscount = 450; // Adjust based on your sample data
+            let totalDiscount = parseFloat("297.99") + parseFloat("807.30");
+            this.totalDiscount = totalDiscount.toFixed(2);
 
-            // Example discount code for sample data
-            this.discountCode = "WELCOMEDISCOUNT"; // If there's a common code, else you can omit this
-
-            // Optionally set a sample share percentage
+            this.discountCode = "WELCOMEDISCOUNT";
             this.sharePercentage = 50;
             this.yourShare = "50";
           },
