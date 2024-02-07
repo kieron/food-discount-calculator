@@ -35,7 +35,7 @@
           <input type="file" id="csvFileInput" accept=".csv" class="hidden" />
         </div>
 
-        <div class="flex items-center mb-4 justify-between">
+        <div class="flex mb-4 justify-between flex-col md:flex-row gap-y-5">
           <input
             v-model="yourShare"
             type="number"
@@ -55,6 +55,12 @@
               class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
             >
               50%
+            </button>
+            <button
+              @click="setSharePercentage(25)"
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+            >
+              25%
             </button>
           </div>
         </div>
