@@ -142,8 +142,8 @@
           sharePercentage: 0,
           yourShare: "",
           resultsData: [],
-          discountCode: "", // Single string to hold the discount code
-          totalDiscount: 0, // New variable to hold the total discount amount
+          discountCode: "",
+          totalDiscount: 0,
         },
         methods: {
           setSharePercentage(percentage) {
@@ -159,7 +159,6 @@
               return;
             }
 
-            // Check if sharePercentage is set and valid
             if (this.sharePercentage <= 0 || this.sharePercentage > 100) {
               alert("Please enter a valid share percentage between 1 and 100.");
               return;
@@ -172,7 +171,6 @@
                 const data = results.data;
                 const owedAmounts = {};
 
-                // Reset resultsData and totalDiscount before processing new file
                 this.resultsData = [];
                 this.totalDiscount = 0;
                 this.discountCode = "";
@@ -194,7 +192,6 @@
                       owedAmounts[businessName] = discount;
                     }
 
-                    // Update the total discount amount with precise two decimal places
                     this.totalDiscount = parseFloat(
                       (this.totalDiscount + discount).toFixed(2)
                     );
@@ -209,12 +206,11 @@
                     owedAmounts[businessName] * yourShareFactor
                   ).toFixed(2);
 
-                  // Push each result into the resultsData array for rendering in the template
                   this.resultsData.push({
                     businessName: businessName,
                     amountOwed: `£${amountOwed}`,
                     yourShare: `£${yourShare}`,
-                    discountCode: this.discountCode, // Use the single discount code for all
+                    discountCode: this.discountCode,
                   });
                 }
               },
