@@ -15,15 +15,18 @@
       class="bg-gray-100 min-h-screen flex items-center justify-center"
     >
       <div
-        class="bg-white p-8 rounded-lg shadow-md max-w-3xl w-full gap-8 flex flex-col"
+        class="bg-white p-8 rounded-lg shadow-md max-w-3xl w-full flex flex-col gap-y-5"
       >
-        <h1 class="text-2xl font-semibold">Discount Calculator</h1>
-        <p>
-          First upload a CSV exported from RedBox, then input your share of the
-          discount, eg if you chose to run a 20% discount, and your responsible
-          for half of it, put 50%, or use a quick toggle!
-        </p>
-        <div class="">
+        <div>
+          <h1 class="text-2xl font-semibold mb-2">Discount Calculator</h1>
+          <p>
+            First upload a CSV exported from RedBox, then input your share of
+            the discount, eg if you chose to run a 20% discount, and your
+            responsible for half of it, put 50%, or use a quick toggle!
+          </p>
+        </div>
+        <hr />
+        <div class="my-5">
           <label
             for="csvFileInput"
             class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
@@ -33,7 +36,7 @@
           <input type="file" id="csvFileInput" accept=".csv" class="hidden" />
         </div>
 
-        <div class="flex mb-4 justify-between flex-col md:flex-row gap-y-5">
+        <div class="flex mb-4 flex-col md:flex-row gap-5">
           <div class="flex flex-col gap-y-2">
             <label class="text-xs font-semibold"
               >Your Share Of The Discount (%)</label
@@ -50,39 +53,40 @@
             <div class="flex space-x-4">
               <button
                 @click="setSharePercentage(100)"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+                class="bg-red-400 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
               >
                 100%
               </button>
               <button
                 @click="setSharePercentage(50)"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+                class="bg-red-400 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
               >
                 50%
               </button>
               <button
                 @click="setSharePercentage(25)"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
+                class="bg-red-400 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
               >
                 25%
               </button>
             </div>
           </div>
         </div>
-
-        <div class="text-center">
+        <div class="">
           <button
             @click="processCSV"
             class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-600 transition duration-300 ease-in-out"
           >
-            Process CSV
+            Calculate Discount
           </button>
         </div>
 
         <div id="results" class="mt-6" v-if="resultsData.length">
+          <hr class="mb-5" />
           <h2 class="text-2xl font-semibold mb-4">Results</h2>
-          <h3 class="text-md font-semibold mb-4">
-            Discount {{discountCode}} saved customers £{{totalDiscount}}!
+          <h3 class="text-md mb-4">
+            Discount <span class="font-semibold">{{discountCode}}</span> saved
+            customers £{{totalDiscount}}!
           </h3>
           <table class="min-w-full table-auto shadow-md bg-white">
             <thead class="bg-gray-200">
